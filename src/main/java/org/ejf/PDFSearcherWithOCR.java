@@ -33,14 +33,7 @@ public class PDFSearcherWithOCR {
         tesseract.setPageSegMode(ITessAPI.TessPageSegMode.PSM_AUTO);
     }
 
-    public static void main(String[] args) throws Exception {
-        if (args.length != 2) {
-            System.out.println("Usage: java PDFSearcherWithOCR <folder> <search_text>");
-            return;
-        }
-
-        String folderPath = args[0];
-        String searchText = args[1].toLowerCase();
+    public static List<String> process(String folderPath, String searchText) throws Exception {
 
         Instant start = Instant.now();
 
@@ -60,7 +53,7 @@ public class PDFSearcherWithOCR {
         int counter = 1;
         for (Path pdfPath : pdfFiles) {
             Path fileName = pdfPath.getFileName();
-            String pdfPathString = pdfPath.toString();
+            String pdfPathString = pdfPath.toString().substring(29);
             String fileNameString = fileName.toString();
             System.out.println("Processing " + fileName + " (" + counter++ + " of " + kPDFs + ")");
 
@@ -105,11 +98,13 @@ public class PDFSearcherWithOCR {
 
         System.out.println("\n=== RESULTS ===");
         System.out.println("Found in " + results.size() + " files:");
-        results.forEach(System.out::println);
+        //results.forEach(System.out::println);
 
         Instant finish = Instant.now();
         String elapsed = Util.getFormattedCurrentProgressTime(start, finish);
         System.out.println("It's finished in " + elapsed);
+
+        return results;
     }
 
     private static String extractText(Path pdfPath) throws IOException {
